@@ -95,7 +95,8 @@ allow-flight=true
 motd=§0§l§kgg§4§l§n1.21.11§0§l§kgg
 EOF
 
-echo "======================================"
-echo "✅ Setup complete."
-echo "Start server with: ./start.sh"
-echo "======================================"
+echo ""
+echo "Installation complete."
+echo "Switching to server directory..."
+sudo cd /root/server || exit
+exec bash
