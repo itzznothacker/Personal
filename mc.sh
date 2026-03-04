@@ -1,17 +1,26 @@
 #!/bin/bash
 
+# ==============================
+# Root privilege enforcement
+# ==============================
+if [ "$EUID" -ne 0 ]; then
+  echo "❌ This installer must be run as root."
+  echo "Use: sudo bash setup_mc.sh"
+  exit 1
+fi
+
 set -e
 
 echo "Updating system..."
-sudo apt update -y
-sudo apt upgrade -y
+apt update -y
+apt upgrade -y
 
 echo "Installing dependencies..."
-sudo apt install -y openjdk-21-jdk-headless curl wget jq ufw
+apt install -y openjdk-21-jdk-headless curl wget jq ufw
 
 echo "Creating server directory..."
-mkdir -p ~/server
-cd ~/server
+mkdir -p /root/server
+cd /root/server
 
 echo "Fetching latest Paper version..."
 LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions[-1]')
@@ -52,9 +61,9 @@ EOF
 chmod +x start.sh
 
 echo "Configuring firewall..."
-sudo ufw allow 25565/tcp
-sudo ufw allow 19132/udp   # Bedrock (Geyser)
-sudo ufw --force enable
+ufw allow 25565/tcp
+ufw allow 19132/udp
+ufw --force enable
 
 echo "Creating plugins directory..."
 mkdir -p plugins
@@ -86,5 +95,7 @@ allow-flight=true
 motd=§0§l§kgg§4§l§n1.21.11§0§l§kgg
 EOF
 
-echo "Setup complete."
+echo "======================================"
+echo "✅ Setup complete."
 echo "Start server with: ./start.sh"
+echo "======================================"
