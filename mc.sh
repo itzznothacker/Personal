@@ -42,6 +42,9 @@ https://api.papermc.io/v2/projects/paper/versions/$LATEST_VERSION/builds/$LATEST
 echo "Accepting EULA..."
 echo "eula=true" > eula.txt
 
+echo "Downloading server icon..."
+wget -O server-icon.png https://i.ibb.co/B0RDGyB/server-icon.png
+
 echo "Creating start script..."
 cat > start.sh << 'EOF'
 #!/bin/bash
@@ -94,6 +97,14 @@ echo "Downloading Floodgate..."
 wget --content-disposition \
 https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
 
+echo "Downloading Chunky..."
+wget -O Chunky-Bukkit-1.4.40.jar \
+https://cdn.modrinth.com/data/fALzjamp/versions/P3y2MXnd/Chunky-Bukkit-1.4.40.jar
+
+echo "Downloading SkinsRestorer..."
+wget -O SkinsRestorer.jar \
+https://cdn.modrinth.com/data/TsLS8Py5/versions/R8h9CQSO/SkinsRestorer.jar
+
 cd "$SERVER_DIR"
 
 echo "Creating server.properties..."
@@ -103,6 +114,10 @@ max-players=99
 allow-flight=true
 motd=§0§l§kgg§4§l§n1.21.11§0§l§kgg
 EOF
+
+# Fix permissions for the invoking user
+CURRENT_USER="${SUDO_USER:-$USER}"
+chown -R "$CURRENT_USER":"$CURRENT_USER" "$SERVER_DIR"
 
 echo ""
 echo "======================================="
