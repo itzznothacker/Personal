@@ -95,8 +95,18 @@ allow-flight=true
 motd=§0§l§kgg§4§l§n1.21.11§0§l§kgg
 EOF
 
+SERVER_DIR="/root/server"
+
 echo ""
-echo "Installation complete."
+echo "======================================="
+echo " Installation Complete"
+echo "======================================="
 echo "Switching to server directory..."
-sudo cd /root/server || exit
+echo ""
+
+cd "$SERVER_DIR" || {
+    echo "Failed to enter $SERVER_DIR"
+    exit 1
+}
+
 exec bash
