@@ -5,11 +5,20 @@
 # ==============================
 if [ "$EUID" -ne 0 ]; then
   echo "❌ This installer must be run as root."
-  echo "Use: sudo bash setup_mc.sh"
+  echo "Use: sudo bash mc.sh"
   exit 1
 fi
 
 set -e
+
+# ==============================
+# Define installation paths
+# ==============================
+BASE_DIR="$(pwd)"
+SERVER_DIR="$BASE_DIR/server"
+PLUGIN_DIR="$SERVER_DIR/plugins"
+
+echo "Installing into: $SERVER_DIR"
 
 echo "Updating system..."
 apt update -y
@@ -19,8 +28,8 @@ echo "Installing dependencies..."
 apt install -y openjdk-21-jdk-headless curl wget jq ufw
 
 echo "Creating server directory..."
-mkdir -p /root/server
-cd /root/server
+mkdir -p "$SERVER_DIR"
+cd "$SERVER_DIR"
 
 echo "Fetching latest Paper version..."
 LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions[-1]')
@@ -66,8 +75,8 @@ ufw allow 19132/udp
 ufw --force enable
 
 echo "Creating plugins directory..."
-mkdir -p plugins
-cd plugins
+mkdir -p "$PLUGIN_DIR"
+cd "$PLUGIN_DIR"
 
 echo "Downloading ViaBackwards..."
 wget -O ViaBackwards-5.7.2.jar \
@@ -85,7 +94,7 @@ echo "Downloading Floodgate..."
 wget --content-disposition \
 https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
 
-cd ..
+cd "$SERVER_DIR"
 
 echo "Creating server.properties..."
 cat > server.properties << 'EOF'
@@ -95,18 +104,15 @@ allow-flight=true
 motd=§0§l§kgg§4§l§n1.21.11§0§l§kgg
 EOF
 
-SERVER_DIR="/root/server"
-
 echo ""
 echo "======================================="
 echo " Installation Complete"
 echo "======================================="
-echo "Switching to server directory..."
+echo "Server installed at:"
+echo "$SERVER_DIR"
 echo ""
-
-cd "$SERVER_DIR" || {
-    echo "Failed to enter $SERVER_DIR"
-    exit 1
-}
+echo "Start server with:"
+echo "./start.sh"
+echo ""
 
 exec bash
